@@ -7,13 +7,14 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const cwd = process.cwd()
 
 const questions = [
     {
         type: "text",
         name: "projectName",
         message: "Qual o nome do seu projeto?",
-        validate: projectName => cwdArchives.map(cwds => projectName === cwds ? "Esse nome já existe" : true)
+        validate: value => value.length === 0 ? `Escolha um nome` : true 
     },
     {
         type: 'select',
@@ -27,15 +28,17 @@ const questions = [
 ]
 
 async function init() {
-    const cwd = process.cwd()
-    const cwdArchives = []
-    fs.readdir(cwd, (err, files) => err ? console.log(err) : files.map(file => cwdArchives.push(file)));
-
     console.log('Você está na pasta: ' + cwd)
+    let result = {}
 
-    const response = await prompts(questions) // Questions for the user
+    try {
+        result = await prompts(questions) // Questions for the user
+    } catch(cancelled) {
+        console.log("Operação cancelada:", cancelled)
+        return
+    }
 
-    const { projectName, project } = response // desestructures the response
+    const { projectName, project } = result // desestructures the response
 
     const target = path.join(cwd, projectName)// set the target
     const templateDir = path.resolve( // set the template directory
@@ -43,15 +46,29 @@ async function init() {
         '..',
         project,
     )
-    createFolder(projectName) // create a folder
+    const existsFolder = createFolder(projectName, projectName) // create a folder
 
-    
-    copyDirectory(templateDir, target, projectName) // copy the directory
+    !existsFolder && copyDirectory(templateDir, target, projectName) // copy the directory
 };
 
-function createFolder(target) {
-    fs.mkdir(target, (err) => console.log(err))
+function createFolder(target, projectName) {
+    let dirExists = false;
+    fs.readdir(cwd, (err, files) => {
+        const allFiles = files
+        const file = allFiles.filter(theFile => theFile === projectName);
+        let dirs = false;
+        if(file.length === 0) {
+            fs.mkdir(projectName)
+            console.log("Pasta criada com sucesso!")
+            dirExists = true
+        } else {
+            console.log("Pasta já existe")
+            dirExists = false
+        }   
+    })
+    return dirExists
 }
+
 
 function copyDirectory(template, dest, projectName) {
     copyDir(template, dest, (err) => {
