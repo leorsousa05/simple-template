@@ -1,0 +1,25 @@
+{
+  "name": "totes-template",
+  "version": "1.1.9",
+  "description": "Templates para inicialização de projetos",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "create-tote": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Leonardo Ribeiro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leorsousa05/tote-templates/issues"
+  },
+  "homepage": "https://github.com/leorsousa05/tote-templates#readme",
+  "dependencies": {
+    "copy-dir": "^1.3.0",
+    "fs-extra": "^10.1.0",
+    "link": "^1.5.0",
+    "prompts": "^2.4.2"
+  }
+}
