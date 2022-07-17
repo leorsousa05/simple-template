@@ -1,6 +1,6 @@
 {
   "name": "simples-template",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Templates para inicialização de projetos, simples.",
   "main": "index.js",
   "type": "module",
